@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 class ClockView extends StatefulWidget {
-
   final double? size;
 
   const ClockView({super.key, this.size});
@@ -14,17 +13,30 @@ class ClockView extends StatefulWidget {
 }
 
 class _ClockViewState extends State<ClockView> {
+  Timer? timerObj;
+
   @override
   void initState() {
-    Timer.periodic(const Duration(seconds: 1), (timer) {
+    timerObj = Timer.periodic(const Duration(seconds: 1), (timer) {
+      print("Inside timer");
+      // if (!mounted) return ;
+      print("After if statement");
       setState(() {});
     });
     super.initState();
   }
 
   @override
+  void dispose() {
+    print("Inside dispose");
+    super.dispose();
+    timerObj?.cancel();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Align(alignment: Alignment.topCenter,
+    return Align(
+      alignment: Alignment.topCenter,
       child: Container(
         width: widget.size,
         height: widget.size,
@@ -90,9 +102,13 @@ class ClockPainter extends CustomPainter {
     canvas.drawCircle(center, radius * 0.75, outlineBrush);
 
     var hourHandX = centerX +
-        radius * 0.4 * cos((dateTime.hour * 30 + dateTime.minute * 0.5) * pi / 180);
+        radius *
+            0.4 *
+            cos((dateTime.hour * 30 + dateTime.minute * 0.5) * pi / 180);
     var hourHandY = centerY +
-        radius * 0.4 * sin((dateTime.hour * 30 + dateTime.minute * 0.5) * pi / 180);
+        radius *
+            0.4 *
+            sin((dateTime.hour * 30 + dateTime.minute * 0.5) * pi / 180);
     canvas.drawLine(center, Offset(hourHandX, hourHandY), hourHandBrush);
 
     var minHandX = centerX + radius * 0.6 * cos(dateTime.minute * 6 * pi / 180);
